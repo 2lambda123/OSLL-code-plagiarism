@@ -23,16 +23,10 @@
   sudo apt install python3 python3-pip
   sudo apt install clang libncurses5
 
-  # Optional
-  sudo apt install python3-venv
-  pip3 install virtualenv
-  python3 -m venv venv
-  source venv/bin/activate
-
-  pip3 install -U pip # pip3 version >= 19.0
-  pip3 install argparse-manpage==3 requests==2.28.1
-  pip3 install --upgrade setuptools # Ensure that an up-to-date version of setuptools is installed
-  make
+  sudo pip3 install -U pip # pip3 version >= 19.0
+  sudo pip3 install argparse-manpage==3 numpy~=1.23.1 typing-extensions~=4.3.0 # needed for building manpage
+  sudo pip3 install --upgrade setuptools # Ensure that an up-to-date version of setuptools is installed
+  sudo make
   ```
 ### 1.2 Build and run local Docker container
 

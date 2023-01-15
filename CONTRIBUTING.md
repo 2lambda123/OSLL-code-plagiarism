@@ -32,8 +32,8 @@ Note that all of the unit tests names should starts with prefix 'test_'.
 Sequence for submitting PR:
 
 1) Fork this repo (for external contributors) or clone (for internal contributors);
-2) Make branch off of 'develop' branch;
-3) Add descriptive unit tests;
+2) Make branch off of 'main' branch;
+3) Add descriptive unit tests if you affect the source code;
 4) If desire, you may to add auto tests. When adding error fixes it's required;
 5) After making commits check that all pre-commit hooks is passed;
-6) Push commits into your remote branch and than create pull request.
+6) Push commits into your remote branch and than create pull request into 'main' branch.

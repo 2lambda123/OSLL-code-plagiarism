@@ -2,11 +2,10 @@ UTIL_VERSION            := 0.3.0
 UTIL_NAME               := codeplag
 PWD                     := $(shell pwd)
 
-BASE_DOCKER_TAG         := $(shell echo $(UTIL_NAME)-base-ubuntu20.04:$(UTIL_VERSION) | tr A-Z a-z)
-TEST_DOCKER_TAG         := $(shell echo $(UTIL_NAME)-test-ubuntu20.04:$(UTIL_VERSION) | tr A-Z a-z)
-DOCKER_TAG              ?= $(shell echo $(UTIL_NAME)-ubuntu20.04:$(UTIL_VERSION) | tr A-Z a-z)
-
-PYTHONPATH              := $(PWD)/src/:$(PWD)/test/auto
+DIST                    ?= ubuntu20.04
+BASE_DOCKER_TAG         := $(shell echo $(UTIL_NAME)-base-$(DIST):$(UTIL_VERSION) | tr A-Z a-z)
+TEST_DOCKER_TAG         := $(shell echo $(UTIL_NAME)-test-$(DIST):$(UTIL_VERSION) | tr A-Z a-z)
+DOCKER_TAG              ?= $(shell echo $(UTIL_NAME)-$(DIST):$(UTIL_VERSION) | tr A-Z a-z)
 
 LOGS_PATH               := /var/log/$(UTIL_NAME)
 CODEPLAG_LOG_PATH       := $(LOGS_PATH)/$(UTIL_NAME).log
@@ -22,6 +21,7 @@ DOCKER_SUB_FILES        := docker/base_ubuntu2004.dockerfile \
                            docker/test_ubuntu2004.dockerfile \
                            docker/ubuntu2004.dockerfile
 
+PYTHONPATH              := $(PWD)/src/:$(PWD)/test/auto
 PYTHON_REQUIRED_LIBS    := $(shell python3 setup.py --install-requirements)
 
 
@@ -31,13 +31,14 @@ endif
 
 
 substitute = @sed \
+		-e "s|@CODEPLAG_LOG_PATH@|${CODEPLAG_LOG_PATH}|g" \
+		-e "s|@CONFIG_PATH@|${CONFIG_PATH}|g" \
+		-e "s|@DEVEL_SUFFIX@|${DEVEL_SUFFIX}|g" \
+		-e "s|@DIST@|.${DIST}|g" \
+		-e "s|@LOGS_PATH@|${LOGS_PATH}|g" \
+		-e "s|@PYTHON_REQUIRED_LIBS@|${PYTHON_REQUIRED_LIBS}|g" \
 		-e "s|@UTIL_NAME@|${UTIL_NAME}|g" \
 		-e "s|@UTIL_VERSION@|${UTIL_VERSION}|g" \
-		-e "s|@CODEPLAG_LOG_PATH@|${CODEPLAG_LOG_PATH}|g" \
-		-e "s|@DEVEL_SUFFIX@|${DEVEL_SUFFIX}|g" \
-		-e "s|@PYTHON_REQUIRED_LIBS@|${PYTHON_REQUIRED_LIBS}|g" \
-		-e "s|@LOGS_PATH@|${LOGS_PATH}|g" \
-		-e "s|@CONFIG_PATH@|${CONFIG_PATH}|g" \
 		$(1) > $(2) \
 		&& echo "Substituting from '$(1)' to '$(2)' ..."
 
@@ -121,9 +122,7 @@ clean: clean-cache
 clean-all: clean
 	rm --force src/$(UTIL_NAME)/consts.py
 
-	rm --force docker/base_ubuntu2004.dockerfile
-	rm --force docker/test_ubuntu2004.dockerfile
-	rm --force docker/ubuntu2004.dockerfile
+	rm --force docker/*.dockerfile
 
 	rm --force debian/changelog
 	rm --force debian/control
